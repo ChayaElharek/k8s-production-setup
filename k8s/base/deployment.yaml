@@ -1,0 +1,67 @@
+# ============================================================
+# DEPLOYMENT — gerencia os Pods da aplicação
+# O k8s garante que sempre terá 2 réplicas rodando
+# Se um Pod morrer, ele sobe outro automaticamente
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-api
+  namespace: demo-app
+  labels:
+    app: demo-api
+spec:
+  replicas: 2                    # ← sempre 2 cópias rodando
+  selector:
+    matchLabels:
+      app: demo-api
+  template:
+    metadata:
+      labels:
+        app: demo-api
+    spec:
+      containers:
+        - name: demo-api
+          image: node:20-alpine  # usando imagem pública por enquanto
+          command: ["node", "-e", "
+            const http = require('http');
+            const os = require('os');
+            http.createServer((req, res) => {
+              if (req.url === '/health') {
+                res.writeHead(200);
+                res.end(JSON.stringify({status:'healthy', pod: os.hostname()}));
+              } else {
+                res.writeHead(200);
+                res.end(JSON.stringify({message:'API no K8s!', pod: os.hostname(), version:'1.0.0'}));
+              }
+            }).listen(3000, () => console.log('Rodando na porta 3000'));
+          "]
+          ports:
+            - containerPort: 3000
+          
+          # ─── Limites de recurso ─────────────────────────
+          # Garante que um Pod não consome toda a memória do Node
+          resources:
+            requests:
+              memory: "64Mi"    # mínimo garantido
+              cpu: "100m"       # 0.1 CPU garantido
+            limits:
+              memory: "128Mi"   # máximo permitido
+              cpu: "200m"       # 0.2 CPU máximo
+
+          # ─── Probes de saúde ────────────────────────────
+          # O k8s verifica se o container está saudável
+          # Se falhar, reinicia automaticamente
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10

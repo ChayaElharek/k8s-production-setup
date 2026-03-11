@@ -1,0 +1,17 @@
+# ============================================================
+# SERVICE — expõe os Pods e balanceia o tráfego entre eles
+# Quando chegar uma requisição, o k8s escolhe qual Pod responde
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-api-svc
+  namespace: demo-app
+spec:
+  selector:
+    app: demo-api              # ← conecta nos Pods com esse label
+  ports:
+    - protocol: TCP
+      port: 80                 # porta do Service
+      targetPort: 3000         # porta do container
+  type: ClusterIP              # acessível só dentro do cluster

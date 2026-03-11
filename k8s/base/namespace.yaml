@@ -1,0 +1,10 @@
+# ============================================================
+# NAMESPACE — agrupa todos os recursos da nossa aplicação
+# Separa do sistema do k8s (kube-system) e de outras apps
+# ============================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-app
+  labels:
+    name: demo-app

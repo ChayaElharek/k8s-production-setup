@@ -1,0 +1,23 @@
+# ============================================================
+# INGRESS — roteamento externo para os Services
+# Recebe tráfego da internet e direciona para o Service
+# ============================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-api-ingress
+  namespace: demo-app
+  annotations:
+    # Usa o Traefik (já vem com k3s) como ingress controller
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: demo-api-svc
+                port:
+                  number: 80
