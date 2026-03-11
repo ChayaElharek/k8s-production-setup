@@ -12,18 +12,14 @@ Aplicação Node.js deployada no Kubernetes (k3s) com boas práticas de produç�
 
 ## Evidências
 
-## Cluster Status
 
-Pods running in the cluster:
+## Pods Running
 
-![Pods Running](images/pods-running.png)
+![Pods Running](https://raw.githubusercontent.com/ChayaElharek/k8s-production-setup/main/pods-running.png)
 
-## Self Healing Demonstration
+## Kubernetes Self Healing
 
-Kubernetes automatically recreating failed pods:
-
-![Self Healing](images/self-healing.png)
-
+![Self Healing](https://raw.githubusercontent.com/ChayaElharek/k8s-production-setup/main/self-healing.png.png)
 
 ## Como rodar
 ```bash
